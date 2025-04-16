@@ -1,0 +1,21 @@
+{
+	"Version": "1.0",
+    "Sections": 
+	[
+        {
+            "Name": "MainSettings",
+            "Description": "",
+            "IsAdvanced": false,
+            "Keys": 
+			[
+				{
+                    "Value": "",
+                    "Name": "TakeAllKeyBind",
+                    "Description": "Type a single character or a Unity KeyCode in this box.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.TextKey"
+                }
+			]
+		}
+	]
+}

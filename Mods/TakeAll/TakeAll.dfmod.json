@@ -1,0 +1,16 @@
+{
+    "ModTitle": "TakeAll",
+    "ModVersion": "1.0.0",
+    "ModAuthor": "Tun\u00e7 T\u00fcrel (BigDunm3r)",
+    "ContactInfo": "contact@tuncturel.com",
+    "DFUnity_Version": "1.1.0",
+    "ModDescription": "Makes it possible to do a 'take all' action during looting when the player hits a designated key on their keyboard.",
+    "GUID": "34c7dbd5-3e27-4414-9abb-84e9721117dc",
+    "Files": [
+        "Assets/Game/Mods/TakeAll/modpresets.json",
+        "Assets/Game/Mods/TakeAll/modsettings.json",
+        "Assets/Game/Mods/TakeAll/Scripts/TakeAllModManager.cs",
+        "Assets/Game/Mods/TakeAll/TakeAll.dfmod.json",
+        "Assets/Game/Mods/TakeAll/Text/textdatabase.txt"
+    ]
+}

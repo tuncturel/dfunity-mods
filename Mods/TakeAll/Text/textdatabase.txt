@@ -1,0 +1,3 @@
+schema:*key,$text
+takeAllFromWagonConfirm,"Sure you'd like to try to transfer everything from your wagon to your inventory?"
+setKeyForTakeAllKeyFail,"Disclaimer: TakeAll mod couldn't parse the key binding in its mod settings. Reverting to the default keybind of 'Q' for the take all action."
