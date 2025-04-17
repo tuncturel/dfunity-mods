@@ -9,7 +9,7 @@
             "Keys": 
 			[
 				{
-                    "Value": "",
+                    "Value": "Q",
                     "Name": "TakeAllKeyBind",
                     "Description": "Type a single character or a Unity KeyCode in this box.",
                     "$version": "v1",

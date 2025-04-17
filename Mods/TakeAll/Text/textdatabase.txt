@@ -1,3 +1,9 @@
 schema:*key,$text
 takeAllFromWagonConfirm,"Sure you'd like to try to transfer everything from your wagon to your inventory?"
+takeAllFailedToTakeEverything,"Failed to take everything to your inventory due to maximum carry weight."
 setKeyForTakeAllKeyFail,"Disclaimer: TakeAll mod couldn't parse the key binding in its mod settings. Reverting to the default keybind of 'Q' for the take all action."
+Settings.MainSettings.TakeAllKeyBind.Name,"TakeAllKeybind"
+Settings.MainSettings.TakeAllKeyBind.Description,"Type a single character or a Unity KeyCode in this box."
+Presets.PresetTitle.Title,"DefaultSettings"
+Presets.PresetTitle.Description,"Default settings for TakeAll mod."
+Mod.Description,"Makes it possible to do a 'take all' action during looting when the player hits a designated key on their keyboard."

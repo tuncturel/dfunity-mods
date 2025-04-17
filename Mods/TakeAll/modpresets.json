@@ -2,7 +2,7 @@
 	{
 		"Title": "DefaultSettings",
 		"Author": "Tunç Türel (BigDunm3r)",
-		"Description": "Default settings for the Take All mod.",
+		"Description": "Default settings for Take All mod.",
 		"SettingsVersion": "1.0",
 		"Values": {
 			"MainSettings": {
