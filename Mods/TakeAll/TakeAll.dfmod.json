@@ -1,7 +1,7 @@
 {
     "ModTitle": "TakeAll",
     "ModVersion": "1.1.0",
-    "ModAuthor": "Tun\u00e7 T\u00fcrel (BigDunm3r)",
+    "ModAuthor": "BigDunm3r",
     "ContactInfo": "contact@tuncturel.com",
     "DFUnity_Version": "1.1.0",
     "ModDescription": "Makes it possible to do a 'take all' action during looting when the player hits a designated key on their keyboard.",

@@ -1,14 +1,14 @@
-using UnityEngine;
-using System;
 using DaggerfallConnect;
+using DaggerfallWorkshop;
+using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
-using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
-using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop;
+using System;
 using System.Reflection;
+using UnityEngine;
 
 namespace TakeAll
 {
@@ -55,14 +55,9 @@ namespace TakeAll
         {
             KeyCode keyCode = KeyCode.None;
             if (Enum.TryParse(keyCodeString, out keyCode))
-            {
                 return keyCode;
-            }
-            else
-            {
-                DaggerfallUI.MessageBox(s_Mod.Localize("setKeyForTakeAllKeyFail"));
-                return KeyCode.Q;
-            }
+            DaggerfallUI.MessageBox(s_Mod.Localize("setKeyForTakeAllKeyFail"));
+            return KeyCode.Q;
         }
 
         void ListenToKeyboardInput()
@@ -73,12 +68,8 @@ namespace TakeAll
                 if (daggerfallLootTarget != null && daggerfallLootTarget.Items.Count > 0)
                 {
                     if (!CanPlayerCarryAllOfTheItems(daggerfallLootTarget.Items))
-                    {
-                        Debug.Log("Player cannot carry all of the items!");
                         DisplayTakeAllFailedToTakeEverythingWindow();
-                    }
                     else
-                        Debug.Log("Player CAN carry all of the items!");
                     TransferAsManyItemsAsYouCanToPlayer(m_DaggerfallInventoryWindow.LootTarget.Items);
                 }
                 else if (IsWagonTabActive())
