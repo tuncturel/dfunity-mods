@@ -2,6 +2,7 @@ schema:*key,$text
 takeAllFromWagonConfirm,"Sure you'd like to try to transfer everything from your wagon to your inventory?"
 takeAllFailedToTakeEverything,"Failed to take everything to your inventory due to maximum carry weight."
 setKeyForTakeAllKeyFail,"Disclaimer: TakeAll mod couldn't parse the key binding in its mod settings. Reverting to the default keybind of 'Q' for the take all action."
+takeAllNotAvailableForCurrentSituation,"Currently this mod doesn't support a take all action on this screen. You can email me at contact@tuncturel.com to let me know."
 Settings.MainSettings.TakeAllKeyBind.Name,"TakeAllKeybind"
 Settings.MainSettings.TakeAllKeyBind.Description,"Type a single character or a Unity KeyCode in this box."
 Presets.PresetTitle.Title,"DefaultSettings"

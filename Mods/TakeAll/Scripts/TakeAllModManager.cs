@@ -64,55 +64,98 @@ namespace TakeAll
         {
             if (Input.GetKeyDown(m_TakeAllKeyCode) && ReestablishReferences())
             {
-                DaggerfallLoot daggerfallLootTarget = m_DaggerfallInventoryWindow.LootTarget;
-                if (daggerfallLootTarget != null && daggerfallLootTarget.Items.Count > 0)
+                if (InventoryWindowIsOpen())
                 {
-                    if (!CanPlayerCarryAllOfTheItems(daggerfallLootTarget.Items))
-                        DisplayTakeAllFailedToTakeEverythingWindow();
-                    else
-                    TransferAsManyItemsAsYouCanToPlayer(m_DaggerfallInventoryWindow.LootTarget.Items);
+                    if (InventoryRightColumnIsALootPileOrCorpse())
+                    {
+                        ItemCollection lootPileOrCorpseItems = m_DaggerfallInventoryWindow.LootTarget.Items;
+                        TransferAsManyItemsAsYouCanToPlayer(lootPileOrCorpseItems);
+                    }
+                    else if (InventoryRightColumnIsDropStage())
+                    {
+                        ItemCollection dropStageItems = GetRemoteItems();
+                        TransferAsManyItemsAsYouCanToPlayer(dropStageItems);
+                    }
+                    else if (InventoryRightColumnIsWagon())
+                    {
+                        ItemCollection wagonItems = GameManager.Instance.PlayerEntity.WagonItems;
+                        AskToTransferAllOfTheWagonItemsToPlayer(wagonItems);
+                    }
                 }
-                else if (IsWagonTabActive())
-                    AskToTransferAllOfTheWagonItemsToPlayer(GameManager.Instance.PlayerEntity.WagonItems);
                 m_DaggerfallInventoryWindow.Refresh();
             }
         }
 
-        void AskToTransferAllOfTheWagonItemsToPlayer(ItemCollection itemCollection)
+        bool InventoryRightColumnIsALootPileOrCorpse()
         {
-            DaggerfallMessageBox daggerfallMessageBox1 = new DaggerfallMessageBox(m_UIManager);
-            daggerfallMessageBox1.SetText(s_Mod.Localize("takeAllFromWagonConfirm"));
-            daggerfallMessageBox1.ParentPanel.SetFocus();
-            Button yesButton = daggerfallMessageBox1.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
-            Button noButton = daggerfallMessageBox1.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
-            noButton.OnMouseClick += (sender, e) => { daggerfallMessageBox1.CloseWindow(); };
-
-            DaggerfallMessageBox daggerfallMessageBox2 = new DaggerfallMessageBox(m_UIManager);
-            daggerfallMessageBox2.SetText(s_Mod.Localize("takeAllFailedToTakeEverything"));
-            Button okButton = daggerfallMessageBox2.AddButton(DaggerfallMessageBox.MessageBoxButtons.OK);
-            okButton.OnMouseClick += (sender, e) => { daggerfallMessageBox2.CloseWindow(); };
-
-            yesButton.OnMouseClick += (sender, e) =>
-            {
-                TransferAsManyItemsAsYouCanToPlayer(itemCollection);
-                m_DaggerfallInventoryWindow.Refresh();
-                daggerfallMessageBox1.CloseWindow();
-                if (!CanPlayerCarryAllOfTheItems(itemCollection))
-                {
-                    daggerfallMessageBox2.Show();
-                    daggerfallMessageBox2.ParentPanel.SetFocus();
-                }
-            };
-
-            daggerfallMessageBox1.Show();
+            DaggerfallLoot daggerfallLootTarget = m_DaggerfallInventoryWindow.LootTarget;
+            return (daggerfallLootTarget != null && daggerfallLootTarget.Items.Count > 0);
         }
 
-        void DisplayTakeAllFailedToTakeEverythingWindow()
+        bool InventoryRightColumnIsWagon()
+        {
+            var currentWindow = m_UIManager.TopWindow;
+
+            if (currentWindow is DaggerfallInventoryWindow inventoryWindow)
+            {
+                FieldInfo usingWagonField = typeof(DaggerfallInventoryWindow).GetField("usingWagon", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (usingWagonField != null)
+                {
+                    bool isUsingWagon = (bool)usingWagonField.GetValue(inventoryWindow);
+                    return isUsingWagon;
+                }
+            }
+            return false;
+        }
+
+        bool InventoryRightColumnIsDropStage()
+        {
+            if (m_DaggerfallInventoryWindow == null)
+                return false;
+
+            bool isDroppedType = m_DaggerfallInventoryWindow.LootTarget == null;
+
+            var remoteTargetTypeField = typeof(DaggerfallInventoryWindow).GetField("remoteTargetType", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (remoteTargetTypeField != null)
+            {
+                object value = remoteTargetTypeField.GetValue(m_DaggerfallInventoryWindow);
+                if (value != null && value.ToString() == "Dropped" && isDroppedType)
+                {
+                    ItemCollection remoteItems = GetRemoteItems();
+                    if (remoteItems != null && remoteItems.Count > 0)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        ItemCollection GetRemoteItems()
+        {
+            var field = typeof(DaggerfallInventoryWindow).GetField("remoteItems", BindingFlags.NonPublic | BindingFlags.Instance);
+            return field?.GetValue(m_DaggerfallInventoryWindow) as ItemCollection;
+        }
+
+        bool InventoryWindowIsOpen()
+        {
+            return DaggerfallUI.Instance.UserInterfaceManager.TopWindow is DaggerfallInventoryWindow;
+        }
+
+        void AskToTransferAllOfTheWagonItemsToPlayer(ItemCollection itemCollection)
         {
             DaggerfallMessageBox daggerfallMessageBox = new DaggerfallMessageBox(m_UIManager);
-            daggerfallMessageBox.SetText(s_Mod.Localize("takeAllFailedToTakeEverything"));
-            Button okButton = daggerfallMessageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.OK);
-            okButton.OnMouseClick += (sender, e) => { daggerfallMessageBox.CloseWindow(); };
+            daggerfallMessageBox.SetText(s_Mod.Localize("takeAllFromWagonConfirm"));
+            Button yesButton = daggerfallMessageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.Yes);
+            Button noButton = daggerfallMessageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.No);
+            noButton.OnMouseClick += (sender, e) =>
+            {
+                daggerfallMessageBox.CloseWindow();
+            };
+            yesButton.OnMouseClick += (sender, e) =>
+            {
+                daggerfallMessageBox.CloseWindow();
+                TransferAsManyItemsAsYouCanToPlayer(itemCollection);
+            };
             daggerfallMessageBox.Show();
             daggerfallMessageBox.ParentPanel.SetFocus();
         }
@@ -136,9 +179,22 @@ namespace TakeAll
                 {
                     DaggerfallUnityItem item = itemCollection.GetItem(i);
                     if (item != null)
-                        TransferItemToPlayer(item, itemCollection);
+                    {
+                        bool playerCanCarryItem = CanPlayerCarryItem(item);
+                        bool playerCanCarryPartOfTheItemStackButNotAll = CanPlayerCarryPartOfAnItemStackButNotAll(item);
+                        if (playerCanCarryItem || playerCanCarryPartOfTheItemStackButNotAll)
+                        {
+                            TransferItemToPlayer(item, itemCollection);
+                        }
+                        else
+                        {
+                            DisplayTakeAllFailedToTakeEverythingWindow();
+                            break;
+                        }
+                    }
                 }
             }
+            m_DaggerfallInventoryWindow.Refresh();
         }
 
         void TransferItemToPlayer(DaggerfallUnityItem item, ItemCollection from)
@@ -174,35 +230,32 @@ namespace TakeAll
                     DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
                 }
             }
-            else
+            else if (item.IsAStack() && m_AvailableCarryWeightOnPlayer > 0)
             {
-                if (item.IsAStack() && m_AvailableCarryWeightOnPlayer > 0)
+                DaggerfallUnityItem splitItem = new DaggerfallUnityItem();
+                int canCarryAmount = (int)(m_AvailableCarryWeightOnPlayer / item.weightInKg);
+
+                if (item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces))
                 {
-                    DaggerfallUnityItem splitItem = new DaggerfallUnityItem();
-                    int canCarryAmount = (int)(m_AvailableCarryWeightOnPlayer / item.weightInKg);
+                    splitItem = from.SplitStack(item, canCarryAmount);
+                    GameManager.Instance.PlayerEntity.GoldPieces += splitItem.stackCount;
+                    from.RemoveItem(splitItem);
 
-                    if (item.IsOfTemplate(ItemGroups.Currency, (int)Currency.Gold_pieces))
-                    {
-                        splitItem = from.SplitStack(item, canCarryAmount);
-                        GameManager.Instance.PlayerEntity.GoldPieces += splitItem.stackCount;
-                        from.RemoveItem(splitItem);
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.GoldPieces);
+                }
+                else
+                {
+                    splitItem = from.SplitStack(item, canCarryAmount);
 
-                        DaggerfallUI.Instance.PlayOneShot(SoundClips.GoldPieces);
-                    }
+                    if (splitItem != null && splitItem.IsQuestItem)
+                        itemPosition = ItemCollection.AddPosition.Front;
                     else
-                    {
-                        splitItem = from.SplitStack(item, canCarryAmount);
+                        itemPosition = ItemCollection.AddPosition.DontCare;
 
-                        if (splitItem != null && splitItem.IsQuestItem)
-                            itemPosition = ItemCollection.AddPosition.Front;
-                        else
-                            itemPosition = ItemCollection.AddPosition.DontCare;
+                    GameManager.Instance.PlayerEntity.Items.Transfer(splitItem, from, itemPosition);
+                    from.RemoveItem(splitItem);
 
-                        GameManager.Instance.PlayerEntity.Items.Transfer(splitItem, from, itemPosition);
-                        from.RemoveItem(splitItem);
-
-                        DaggerfallUI.Instance.PlayOneShot(SoundClips.GoldPieces);
-                    }
+                    DaggerfallUI.Instance.PlayOneShot(SoundClips.GoldPieces);
                 }
             }
         }
@@ -217,6 +270,28 @@ namespace TakeAll
             else
                 playerCanCarryItems = (item.weightInKg <= m_AvailableCarryWeightOnPlayer);
             return playerCanCarryItems;
+        }
+
+        bool CanPlayerCarryPartOfAnItemStackButNotAll(DaggerfallUnityItem stackItem)
+        {
+            m_AvailableCarryWeightOnPlayer = GameManager.Instance.PlayerEntity.MaxEncumbrance - GameManager.Instance.PlayerEntity.CarriedWeight;
+            if (stackItem == null || !stackItem.IsAStack() || !Mathf.Approximately(m_AvailableCarryWeightOnPlayer, 0f))
+                return false;
+            float stackItemTotalWeight = stackItem.weightInKg * stackItem.stackCount;
+            return (stackItemTotalWeight > m_AvailableCarryWeightOnPlayer);
+        }
+
+        void DisplayTakeAllFailedToTakeEverythingWindow()
+        {
+            DaggerfallMessageBox daggerfallMessageBox = new DaggerfallMessageBox(m_UIManager);
+            daggerfallMessageBox.SetText(s_Mod.Localize("takeAllFailedToTakeEverything"));
+            Button okButton = daggerfallMessageBox.AddButton(DaggerfallMessageBox.MessageBoxButtons.OK);
+            okButton.OnMouseClick += (sender, e) =>
+            {
+                daggerfallMessageBox.CloseWindow();
+            };
+            daggerfallMessageBox.Show();
+            daggerfallMessageBox.ParentPanel.SetFocus();
         }
 
         bool CanPlayerCarryAllOfTheItems(ItemCollection itemCollection)
@@ -261,22 +336,6 @@ namespace TakeAll
             {
                 DaggerfallUI.MessageBox(TextManager.Instance.GetLocalizedText("readMapFail"));
             }
-        }
-
-        bool IsWagonTabActive()
-        {
-            var currentWindow = m_UIManager.TopWindow;
-
-            if (currentWindow is DaggerfallInventoryWindow inventoryWindow)
-            {
-                FieldInfo usingWagonField = typeof(DaggerfallInventoryWindow).GetField("usingWagon", BindingFlags.NonPublic | BindingFlags.Instance);
-                if (usingWagonField != null)
-                {
-                    bool isUsingWagon = (bool)usingWagonField.GetValue(inventoryWindow);
-                    return isUsingWagon;
-                }
-            }
-            return false;
         }
     }
 }
