@@ -1,4 +1,5 @@
 schema:*key,$text
+takeAllbtnLabel,"Take All"
 takeAllFromWagonConfirm,"Sure you'd like to try to transfer everything from your wagon to your inventory?"
 takeAllFailedToTakeEverything,"Failed to take everything to your inventory due to maximum carry weight."
 setKeyForTakeAllKeyFail,"Disclaimer: TakeAll mod couldn't parse the key binding in its mod settings. Reverting to the default keybind of 'Q' for the take all action."

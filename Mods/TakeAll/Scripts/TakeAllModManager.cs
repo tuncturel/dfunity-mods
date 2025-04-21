@@ -17,14 +17,15 @@ namespace TakeAll
     //Their repo is here: https://github.com/Shapur1234/DFU-LootMenu/blob/main/Scripts/LootMenu.cs
     public class TakeAllModManager : MonoBehaviour
     {
-        static Mod s_Mod;
+        internal static TakeAllModManager Instance { get; private set; }
+        internal static Mod s_Mod;
         DaggerfallUI m_DaggerfallUI;
         UserInterfaceManager m_UIManager;
         DaggerfallInventoryWindow m_DaggerfallInventoryWindow;
         KeyCode m_TakeAllKeyCode = KeyCode.None;
         float m_AvailableCarryWeightOnPlayer;
 
-        [Invoke(StateManager.StateTypes.Game, 0)]
+        [Invoke(StateManager.StateTypes.Start, 0)]
         public static void Init(InitParams initParams)
         {
             s_Mod = initParams.Mod;
@@ -39,10 +40,17 @@ namespace TakeAll
 
         void PrepareMod()
         {
+            Instance = this; // save static instance
             s_Mod = ModManager.Instance.GetMod("TakeAll");
             ModSettings modSettings = s_Mod.GetSettings();
             string takeAllKeyBind = s_Mod.GetSettings().GetValue<string>("MainSettings", "TakeAllKeyBind");
             m_TakeAllKeyCode = GetKeyCodeFromSettings(takeAllKeyBind);
+
+            // Register new window
+            UIWindowFactory.RegisterCustomUIWindow(
+                    UIWindowType.Inventory,
+                    typeof(TakeAllInventory));
+
             s_Mod.IsReady = true;
         }
 
@@ -62,7 +70,15 @@ namespace TakeAll
 
         void ListenToKeyboardInput()
         {
-            if (Input.GetKeyDown(m_TakeAllKeyCode) && ReestablishReferences())
+            if (Input.GetKeyDown(m_TakeAllKeyCode))
+            {
+                TakeEverything();
+            }
+        }
+
+        internal void TakeEverything()
+        {
+            if (ReestablishReferences())
             {
                 DaggerfallLoot daggerfallLootTarget = m_DaggerfallInventoryWindow.LootTarget;
                 if (daggerfallLootTarget != null && daggerfallLootTarget.Items.Count > 0)
@@ -70,7 +86,7 @@ namespace TakeAll
                     if (!CanPlayerCarryAllOfTheItems(daggerfallLootTarget.Items))
                         DisplayTakeAllFailedToTakeEverythingWindow();
                     else
-                    TransferAsManyItemsAsYouCanToPlayer(m_DaggerfallInventoryWindow.LootTarget.Items);
+                        TransferAsManyItemsAsYouCanToPlayer(m_DaggerfallInventoryWindow.LootTarget.Items);
                 }
                 else if (IsWagonTabActive())
                     AskToTransferAllOfTheWagonItemsToPlayer(GameManager.Instance.PlayerEntity.WagonItems);

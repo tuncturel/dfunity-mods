@@ -11,6 +11,7 @@
         "Assets/Game/Mods/TakeAll/modsettings.json",
         "Assets/Game/Mods/TakeAll/Scripts/TakeAllModManager.cs",
         "Assets/Game/Mods/TakeAll/TakeAll.dfmod.json",
-        "Assets/Game/Mods/TakeAll/Text/textdatabase.txt"
+        "Assets/Game/Mods/TakeAll/Text/textdatabase.txt",
+        "Assets/Game/Mods/TakeAll/Scripts/TakeAllInventory.cs"
     ]
 }
