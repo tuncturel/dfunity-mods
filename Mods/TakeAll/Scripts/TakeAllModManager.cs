@@ -186,11 +186,6 @@ namespace TakeAll
                         {
                             TransferItemToPlayer(item, itemCollection);
                         }
-                        else
-                        {
-                            DisplayTakeAllFailedToTakeEverythingWindow();
-                            break;
-                        }
                     }
                 }
             }
