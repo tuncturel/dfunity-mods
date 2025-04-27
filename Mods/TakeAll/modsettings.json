@@ -6,16 +6,36 @@
             "Name": "MainSettings",
             "Description": "",
             "IsAdvanced": false,
-            "Keys": 
-			[
-				{
+            "Keys": [
+                {
                     "Value": "Q",
                     "Name": "TakeAllKeyBind",
                     "Description": "Type a single character or a Unity KeyCode in this box.",
                     "$version": "v1",
                     "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.TextKey"
+                },
+                {
+                    "Value": true,
+                    "Name": "ShowTakeAllInventoryButton",
+                    "Description": "Shows a clickable Take All button in the inventory screen.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
+                    "Value": true,
+                    "Name": "ShowTakeAllConfirmationPopupForWagon",
+                    "Description": "Shows a confirmation popup when the player attempts to do a Take All action to prevent accidental transfers.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
+                },
+                {
+                    "Value": true,
+                    "Name": "ShowPopupWhenTakeAllFailedToTakeEverything",
+                    "Description": "Shows a disclaimer popup when the take all action couldn't carry over all the items due to player encumberance.",
+                    "$version": "v1",
+                    "$type": "DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings.ToggleKey"
                 }
-			]
+            ]
 		}
 	]
 }

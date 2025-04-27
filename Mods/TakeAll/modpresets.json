@@ -1,13 +1,16 @@
 [
 	{
 		"Title": "DefaultSettings",
-		"Author": "Tunç Türel (BigDunm3r)",
+		"Author": "BigDunm3r",
 		"Description": "Default settings for Take All mod.",
 		"SettingsVersion": "1.0",
 		"Values": {
-			"MainSettings": {
-				"TakeAllKeyBind": "Q"
-							}
+            "MainSettings": {
+                "TakeAllKeyBind": "Q",
+                "ShowTakeAllInventoryButton": "True",
+                "ShowTakeAllConfirmationPopupForWagon": "True",
+                "ShowPopupWhenTakeAllFailedToTakeEverything": "True"
+            }
 		}
 	}
 ]
